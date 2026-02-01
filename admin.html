@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Admin Panel - Verify Hotel community</title>
+  <style>
+    :root{--bg:#0b1220; --card:#111b33; --text:#e8eefc; --muted:rgba(232,238,252,.75); --ok:#22c55e; --bad:#ef4444;}
+    *{box-sizing:border-box;font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans Thai", Arial;}
+    body{margin:0; background: radial-gradient(900px 600px at 20% 10%, rgba(42,168,255,.25), transparent 60%),
+                       radial-gradient(900px 600px at 80% 20%, rgba(124,92,255,.25), transparent 60%),
+                       var(--bg);
+         color:var(--text); min-height:100vh; padding:18px; display:flex; align-items:flex-start; justify-content:center;}
+    .wrap{width:min(1100px,100%);}
+    .top{display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:12px;}
+    .top h1{margin:0; font-size:18px;}
+    .btn{border:0; cursor:pointer; padding:10px 12px; border-radius:12px; font-weight:800; background:#1f2a44; color:var(--text);}
+    .btn.ok{background:var(--ok); color:#062012;}
+    .btn.bad{background:var(--bad); color:#2b0b0b;}
+    .card{background:rgba(17,27,51,.9); border:1px solid rgba(255,255,255,.12); border-radius:18px; padding:16px;
+          box-shadow: 0 30px 90px rgba(0,0,0,.35);}
+    label{font-size:12px; color:var(--muted);}
+    input{width:100%; margin-top:6px; padding:10px 12px; border-radius:12px; border:1px solid rgba(255,255,255,.12); background:#0b1220; color:var(--text);}
+    .grid{display:grid; grid-template-columns: 1fr 1fr; gap:12px;}
+    @media(max-width:860px){.grid{grid-template-columns:1fr;}}
+    .muted{color:var(--muted); font-size:13px; line-height:1.5;}
+    table{width:100%; border-collapse:collapse; margin-top:10px; font-size:13px;}
+    th,td{border-bottom:1px solid rgba(255,255,255,.08); padding:10px 8px; text-align:left; vertical-align:top;}
+    th{color:rgba(232,238,252,.85); font-size:12px; text-transform:uppercase; letter-spacing:.08em;}
+    .tag{display:inline-block; padding:4px 8px; border-radius:999px; font-weight:800; font-size:12px;}
+    .passed{background: rgba(34,197,94,.15); color: #6ef2a2; border:1px solid rgba(34,197,94,.25);}
+    .failed{background: rgba(239,68,68,.15); color: #ff9a9a; border:1px solid rgba(239,68,68,.25);}
+    .pending{background: rgba(42,168,255,.12); color:#9ed7ff; border:1px solid rgba(42,168,255,.22);}
+    code{background:#0b1220; padding:2px 6px; border-radius:8px; border:1px solid rgba(255,255,255,.08);}
+    a{color:#9ed7ff; text-decoration:none; font-weight:800;}
+    a:hover{text-decoration:underline;}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top">
+      <h1>แผงควบคุม — Verify Hotel community Discord</h1>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <button class="btn" onclick="location.href='/'">กลับหน้าเว็บ</button>
+        <button class="btn bad" id="logoutBtn" style="display:none;">ออกจากระบบ</button>
+      </div>
+    </div>
+
+    <div class="card" id="loginCard">
+      <h2 style="margin:0 0 10px 0; font-size:15px;">เข้าสู่ระบบผู้ดูแล</h2>
+      <div class="muted">เพื่อความปลอดภัย เราไม่ทำ “เข้าอัตโนมัติด้วยอีเมล” — ต้องใช้รหัสผ่านเท่านั้น</div>
+      <div class="grid" style="margin-top:12px;">
+        <div>
+          <label>อีเมลผู้ดูแล</label>
+          <input id="email" placeholder="wasabikhrabphm@gmail.com"/>
+        </div>
+        <div>
+          <label>รหัสผ่านผู้ดูแล</label>
+          <input id="password" type="password" placeholder="••••••••"/>
+        </div>
+      </div>
+      <button class="btn ok" style="margin-top:12px;" id="loginBtn">เข้าสู่ระบบ</button>
+      <div class="muted" id="loginMsg" style="margin-top:10px;"></div>
+    </div>
+
+    <div class="card" id="panelCard" style="display:none; margin-top:12px;">
+      <div class="muted" id="me"></div>
+      <div class="muted" style="margin-top:6px;">
+        ข้อมูลที่แสดง: <b>Session ID</b>, สถานะ, วันเกิด (DOB), อายุ, เวลาอัปเดต, Ref Code — <b>ไม่มีภาพบัตร/ภาพหน้า</b>
+      </div>
+      <button class="btn" style="margin-top:12px;" id="refreshBtn">รีเฟรชผลทั้งหมด</button>
+
+      <div style="overflow:auto;">
+        <table id="tbl">
+          <thead>
+            <tr>
+              <th>Session</th>
+              <th>Status</th>
+              <th>DOB</th>
+              <th>Age</th>
+              <th>Ref</th>
+              <th>Updated</th>
+              <th>VendorData</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
+      <div class="muted" style="margin-top:10px;">
+        Tip: ให้สมาชิกส่ง <b>Session ID</b> + <b>Ref Code</b> แทนการส่งรูปสกรีนช็อต จะกันปลอมได้ดีกว่า
+      </div>
+    </div>
+  </div>
+
+<script>
+  const loginCard = document.getElementById("loginCard");
+  const panelCard = document.getElementById("panelCard");
+  const loginMsg = document.getElementById("loginMsg");
+  const logoutBtn = document.getElementById("logoutBtn");
+  const me = document.getElementById("me");
+  const tbody = document.querySelector("#tbl tbody");
+
+  async function api(path, opts){
+    const r = await fetch(path, opts);
+    const data = await r.json().catch(()=> ({}));
+    if(!r.ok) throw new Error(data?.error || "request failed");
+    return data;
+  }
+
+  async function checkMe(){
+    try{
+      const data = await api("/api/admin/me");
+      me.textContent = "ล็อกอินแล้ว: " + data.email;
+      loginCard.style.display = "none";
+      panelCard.style.display = "block";
+      logoutBtn.style.display = "inline-block";
+      await refresh();
+    }catch(e){
+      // not logged in
+    }
+  }
+
+  async function refresh(){
+    tbody.innerHTML = "";
+    const data = await api("/api/admin/results");
+    for(const item of data.items){
+      const tr = document.createElement("tr");
+      const tagClass = item.status === "passed" ? "passed" : (item.status === "failed" ? "failed" : "pending");
+      tr.innerHTML = `
+        <td><code>${item.sessionId}</code></td>
+        <td><span class="tag ${tagClass}">${item.status}</span></td>
+        <td>${item.dob || "-"}</td>
+        <td>${item.age ?? "-"}</td>
+        <td><code>${item.refCode || "-"}</code></td>
+        <td>${item.updatedAt || "-"}</td>
+        <td>${item.vendorData || "-"}</td>
+      `;
+      tbody.appendChild(tr);
+    }
+  }
+
+  document.getElementById("loginBtn").onclick = async () => {
+    loginMsg.textContent = "กำลังเข้าสู่ระบบ...";
+    try{
+      await api("/api/admin/login", {
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        body: JSON.stringify({
+          email: document.getElementById("email").value.trim(),
+          password: document.getElementById("password").value
+        })
+      });
+      loginMsg.textContent = "เข้าสู่ระบบสำเร็จ ✅";
+      await checkMe();
+    }catch(e){
+      loginMsg.textContent = "เข้าสู่ระบบไม่สำเร็จ: " + e.message;
+    }
+  };
+
+  document.getElementById("refreshBtn").onclick = ()=> refresh().catch(e=>alert(e.message));
+  logoutBtn.onclick = async () => {
+    try{ await api("/api/admin/logout", { method:"POST" }); }catch{}
+    location.reload();
+  };
+
+  checkMe();
+</script>
+</body>
+</html>
