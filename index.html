@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Verify Hotel community Discord</title>
+  <meta name="description" content="Verify Hotel community | ยืนยันอายุขั้นสูง" />
+  <style>
+    :root{
+      --bg1:#f7fbff; --bg2:#fff7fb; --card:#ffffffcc; --text:#132033; --muted:#6b7890;
+      --accent:#2aa8ff; --accent2:#7c5cff; --danger:#ff3b3b; --ok:#1fbf75;
+      --shadow: 0 20px 60px rgba(17, 25, 40, 0.12); --radius: 18px;
+    }
+    *{box-sizing:border-box;font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans Thai", Arial;}
+    body{
+      margin:0; color:var(--text);
+      background: radial-gradient(1200px 700px at 20% 10%, var(--bg2), transparent 60%),
+                  radial-gradient(1200px 700px at 80% 20%, var(--bg1), transparent 60%),
+                  #ffffff;
+      min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px;
+    }
+    .wrap{width:min(1020px, 100%);}
+    .hero{border-radius: var(--radius); background: linear-gradient(135deg, #ffffff, #ffffffcc);
+      box-shadow: var(--shadow); overflow:hidden; position:relative;}
+    .topbar{
+      display:flex; align-items:center; justify-content:space-between;
+      padding:18px 22px; border-bottom:1px solid rgba(0,0,0,0.06); backdrop-filter: blur(10px);
+      gap:12px;
+    }
+    .brand{display:flex; gap:10px; align-items:center;}
+    .logo{width:34px; height:34px; border-radius:12px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      box-shadow: 0 10px 30px rgba(42,168,255,0.35);}
+    .brand b{letter-spacing:.2px; font-size:14px;}
+    .brand .subtitle{color:var(--muted); font-size:12px; margin-top:2px;}
+    .pill{font-size:12px; padding:8px 12px; border-radius:999px; background: rgba(42,168,255,0.10);
+      color:#0b5ea8; border:1px solid rgba(42,168,255,0.22); white-space:nowrap;}
+    .content{display:grid; grid-template-columns: 1.25fr 0.75fr; gap:18px; padding:22px;}
+    @media (max-width: 900px){ .content{grid-template-columns:1fr;} .pill{display:none;} }
+    .banner{
+      border-radius: 16px; min-height: 330px; position:relative; overflow:hidden;
+      background: linear-gradient(180deg, rgba(0,0,0,0.25), rgba(0,0,0,0.05)),
+        url("https://images.unsplash.com/photo-1520962917967-2326c47c0f0f?auto=format&fit=crop&w=1600&q=80");
+      background-size: cover; background-position: center;
+      box-shadow: 0 16px 40px rgba(0,0,0,0.12);
+    }
+    .banner .centerTitle{
+      position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+      padding:20px;
+      text-align:center;
+    }
+    .centerTitle .titleBox{
+      max-width: 520px;
+      border-radius: 18px;
+      padding: 18px 18px;
+      background: rgba(0,0,0,0.35);
+      border: 1px solid rgba(255,255,255,0.18);
+      backdrop-filter: blur(10px);
+      color: #fff;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+    }
+    .titleBox h1{margin:0 0 6px 0; font-size:22px; line-height:1.2;}
+    .titleBox p{margin:0; font-size:13px; color: rgba(255,255,255,0.85); line-height:1.5;}
+    .card{border-radius:16px; background: var(--card); border:1px solid rgba(0,0,0,0.06);
+      padding:18px; box-shadow: 0 12px 30px rgba(17, 25, 40, 0.08); backdrop-filter: blur(10px);}
+    .card h2{margin:0 0 10px 0; font-size:16px;}
+    .muted{color:var(--muted); font-size:13px; line-height:1.5;}
+    .btn{
+      width:100%; margin-top:14px; padding:12px 14px; border-radius:14px; border:0; cursor:pointer;
+      font-weight:800; color:white; background: linear-gradient(135deg, var(--accent), var(--accent2));
+      box-shadow: 0 14px 30px rgba(124,92,255,0.25); transition: transform .08s ease;
+    }
+    .btn:active{transform: scale(0.99);}
+    .btn.secondary{background:#0f172a; box-shadow:none; margin-top:10px;}
+    .status{margin-top:14px; border-radius:14px; padding:12px 12px;
+      border:1px dashed rgba(0,0,0,0.14); background: rgba(255,255,255,0.6); font-size:13px;}
+    .row{display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;}
+    .chip{font-size:12px; padding:7px 10px; border-radius:999px; border:1px solid rgba(0,0,0,0.08);
+      background: rgba(255,255,255,0.7);}
+    .warn{color: var(--danger); font-weight:800;}
+    a.link{color:#0b5ea8; text-decoration:none; font-weight:800;}
+    a.link:hover{text-decoration:underline;}
+
+    .privacy-shield{display:none; position:fixed; inset:0; background:#000; z-index:9999;}
+  </style>
+</head>
+<body>
+  <div class="privacy-shield" id="shield"></div>
+
+  <div class="wrap">
+    <div class="hero">
+      <div class="topbar">
+        <div class="brand">
+          <div class="logo"></div>
+          <div>
+            <b>Verify Hotel community Discord</b>
+            <div class="subtitle">Verify Hotel community | ยืนยันอายุขั้นสูง</div>
+          </div>
+        </div>
+        <div class="pill">Secure • Session-based • Audit</div>
+      </div>
+
+      <div class="content">
+        <div class="banner">
+          <div class="centerTitle">
+            <div class="titleBox">
+              <h1>Verify Hotel community | ยืนยันอายุขั้นสูง</h1>
+              <p>ตรวจเอกสาร + ยืนยันใบหน้า (ไม่เก็บภาพบัตร) และออกผล “ผ่านการตรวจสอบขั้นสูง” พร้อมอายุที่คำนวณได้</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>เริ่มต้นการตรวจสอบ</h2>
+          <div class="muted">
+            - ระบบใช้ <b>Session ID</b> เพื่อตรวจสอบย้อนกลับได้<br/>
+            - ฝั่งแสดงผลจะโชว์เฉพาะ <b>วันเกิด</b> และ <b>อายุ</b> (ไม่แสดงภาพบัตรประชาชน)<br/>
+            <span class="warn">หมายเหตุ:</span> เว็บ “ห้ามแคปจอ 100%” ทำไม่ได้บนเบราว์เซอร์ แต่เรามีจอดำเมื่อสลับแท็บ + โค้ดกันสลับผล
+          </div>
+
+          <div class="row">
+            <div class="chip">🔒 จำกัดข้อมูล</div>
+            <div class="chip">🧾 DOB only</div>
+            <div class="chip">🏷️ Ref code</div>
+          </div>
+
+          <button class="btn" id="startBtn">เริ่มยืนยันบัตรประชาชน + ใบหน้า</button>
+          <button class="btn secondary" id="checkBtn" disabled>ดูผลการตรวจ (Session ID)</button>
+
+          <div class="status" id="statusBox">สถานะ: พร้อมเริ่มต้น</div>
+
+          <div class="muted" style="margin-top:12px">
+            ผู้ดูแลระบบ? ไปที่ <a class="link" href="/admin.html">แผงควบคุม</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+  const statusBox = document.getElementById("statusBox");
+  const startBtn = document.getElementById("startBtn");
+  const checkBtn = document.getElementById("checkBtn");
+  const shield = document.getElementById("shield");
+
+  let lastSessionId = null;
+
+  startBtn.addEventListener("click", async () => {
+    statusBox.textContent = "กำลังสร้าง Session...";
+    startBtn.disabled = true;
+
+    try{
+      const r = await fetch("/api/create-session", {
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        body: JSON.stringify({ personId: "discord_user_placeholder" })
+      });
+      const data = await r.json();
+      if(!r.ok) throw new Error(data?.detail || data?.error || "create failed");
+
+      lastSessionId = data.sessionId;
+      checkBtn.disabled = false;
+
+      statusBox.innerHTML = `Session ถูกสร้างแล้ว ✅<br/>Session ID: <b>${data.sessionId}</b><br/>Ref Code: <b>${data.refCode}</b><br/>กำลังพาไปหน้าตรวจสอบ...`;
+      window.location.href = data.url;
+    }catch(e){
+      statusBox.textContent = "ผิดพลาด: " + e.message;
+      startBtn.disabled = false;
+    }
+  });
+
+  checkBtn.addEventListener("click", async () => {
+    const sid = prompt("กรอก Session ID", lastSessionId || "");
+    if(!sid) return;
+
+    statusBox.textContent = "กำลังดึงผล...";
+    const r = await fetch("/api/result/" + encodeURIComponent(sid));
+    const data = await r.json();
+    if(!r.ok){
+      statusBox.textContent = "ไม่พบผลของ Session นี้";
+      return;
+    }
+
+    if(data.status === "passed"){
+      statusBox.innerHTML =
+        `✅ ตรวจสอบสำเร็จ ผ่านการตรวจสอบขั้นสูงในการยืนยันอายุแล้ว<br/>` +
+        `อายุที่ตรวจสอบได้: <b>${data.age ?? "ไม่ระบุ"}</b> ปี<br/>` +
+        `วันเกิด (DOB): <b>${data.dob ?? "ไม่ระบุ"}</b><br/>` +
+        `Ref Code: <b>${data.refCode ?? "-"}</b><br/>` +
+        `<span class="muted">อัปเดตล่าสุด: ${data.updatedAt}</span>`;
+    }else if(data.status === "failed"){
+      statusBox.innerHTML =
+        `❌ ไม่ผ่านการตรวจสอบขั้นสูง<br/>` +
+        `<span class="muted">decision: ${data.decision}</span>`;
+    }else{
+      statusBox.innerHTML =
+        `⏳ อยู่ระหว่างตรวจสอบ / ยังไม่เสร็จ<br/>` +
+        `<span class="muted">สถานะ: ${data.status}</span>`;
+    }
+  });
+
+  document.addEventListener("visibilitychange", () => {
+    shield.style.display = document.hidden ? "block" : "none";
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Provider Demo - Verify</title>
+  <style>
+    *{box-sizing:border-box;font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans Thai", Arial;}
+    body{margin:0; min-height:100vh; display:flex; align-items:center; justify-content:center; padding:18px; background:#0b1220; color:#e8eefc;}
+    .card{width:min(720px,100%); background:#111b33; border:1px solid rgba(255,255,255,.12); border-radius:18px; padding:18px; box-shadow: 0 30px 90px rgba(0,0,0,.35);}
+    h1{margin:0 0 8px 0; font-size:18px;}
+    p{margin:0 0 16px 0; color: rgba(232,238,252,.8); font-size:13px; line-height:1.5;}
+    .row{display:grid; grid-template-columns: 1fr 1fr; gap:12px;}
+    @media(max-width:700px){.row{grid-template-columns:1fr;}}
+    label{font-size:12px; color: rgba(232,238,252,.75);}
+    input{width:100%; margin-top:6px; padding:10px 12px; border-radius:12px; border:1px solid rgba(255,255,255,.12); background:#0b1220; color:#e8eefc;}
+    .btnrow{display:flex; gap:10px; margin-top:14px; flex-wrap:wrap;}
+    button{padding:10px 12px; border-radius:12px; border:0; cursor:pointer; font-weight:800;}
+    .ok{background: #22c55e; color:#052012;}
+    .bad{background:#ef4444; color:#2b0b0b;}
+    .ghost{background:#1f2a44; color:#e8eefc;}
+    .status{margin-top:12px; font-size:13px; color: rgba(232,238,252,.85);}
+    code{background:#0b1220; padding:2px 6px; border-radius:8px; border:1px solid rgba(255,255,255,.08);}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>หน้าจำลองผู้ให้บริการ (DEMO)</h1>
+    <p>หน้านี้เอาไว้ทดสอบโฟลว์เท่านั้น — ใช้แทนผู้ให้บริการจริงในโหมด DEMO (ไม่ใช่ KYC จริง)</p>
+    <div class="row">
+      <div>
+        <label>Session ID</label>
+        <input id="sid" readonly />
+      </div>
+      <div>
+        <label>Ref Code (กันสลับผล)</label>
+        <input id="ref" readonly />
+      </div>
+      <div style="grid-column:1/-1">
+        <label>วันเกิด (DOB) — รูปแบบ YYYY-MM-DD</label>
+        <input id="dob" placeholder="เช่น 2002-06-14" />
+      </div>
+    </div>
+
+    <div class="btnrow">
+      <button class="ok" id="approve">ยืนยันสำเร็จ (Approved)</button>
+      <button class="bad" id="reject">ไม่ผ่าน (Rejected)</button>
+      <button class="ghost" id="back">กลับหน้าแรก</button>
+    </div>
+
+    <div class="status" id="status"></div>
+    <p style="margin-top:16px; font-size:12px; color: rgba(232,238,252,.65);">
+      หมายเหตุ: ระบบนี้เก็บแค่ <b>DOB</b> และผลผ่าน/ไม่ผ่าน — ไม่เก็บภาพบัตร/ภาพหน้า
+    </p>
+  </div>
+
+<script>
+  const qs = new URLSearchParams(location.search);
+  const sid = qs.get("sessionId") || "";
+  const ref = qs.get("ref") || "";
+  document.getElementById("sid").value = sid;
+  document.getElementById("ref").value = ref;
+
+  const status = document.getElementById("status");
+
+  async function submit(decision){
+    const dob = document.getElementById("dob").value.trim();
+    status.textContent = "กำลังส่งผล...";
+    const r = await fetch("/api/provider/demo-submit", {
+      method:"POST",
+      headers:{ "Content-Type":"application/json" },
+      body: JSON.stringify({ sessionId: sid, decision, dob })
+    });
+    const data = await r.json();
+    if(!r.ok){
+      status.textContent = "ผิดพลาด: " + (data?.error || "submit failed");
+      return;
+    }
+    status.innerHTML = `ส่งผลเรียบร้อย ✅ กลับไปหน้าแรกแล้วกด "ดูผลการตรวจ" และใส่ Session ID: <code>${sid}</code>`;
+  }
+
+  document.getElementById("approve").onclick = ()=>submit("approved");
+  document.getElementById("reject").onclick = ()=>submit("rejected");
+  document.getElementById("back").onclick = ()=>location.href="/";
+</script>
+</body>
+</html>
